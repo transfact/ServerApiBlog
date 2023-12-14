@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
+using System.Text.Json.Serialization;
 namespace ServerApiBlog.Models
 {
     public class Blog
@@ -10,7 +10,8 @@ namespace ServerApiBlog.Models
 
         [ForeignKey(name: "MemberId")]
         public int MemberId { get; set; } // Foreign key property
-        public virtual Member Member { get; set; }
+       [JsonIgnore]
+        public  Member Member { get; set; }
 
         public string? Secret { get; set; }
     }

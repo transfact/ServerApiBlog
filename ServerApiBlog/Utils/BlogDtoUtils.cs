@@ -12,5 +12,13 @@ namespace ServerApiBlog.Utils
                Title= b.Title,
                Secret = "Secret"
            };
+
+        public static Blog DTO2PostBlog(RequestBlogDTO b) =>
+           new Blog
+           {
+               Post = b.Post,
+               Title = b.Title,
+               Secret = "Secret"
+           };
     }
 }

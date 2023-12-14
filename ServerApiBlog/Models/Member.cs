@@ -1,4 +1,6 @@
-﻿namespace ServerApiBlog.Models
+﻿
+using System.Text.Json.Serialization;
+namespace ServerApiBlog.Models
 {
     public class Member
     {
@@ -7,7 +9,8 @@
 
         public string? Email { get; set; }
         public  DateTime CreatedDate { set;  get; } 
-        public virtual ICollection<Blog> Blogs { get; set; } = new List<Blog>(); // Add this line
+        [JsonIgnore]
+        public  ICollection<Blog> Blogs { get; set; }
 
         public string? Secret { get; set; }
     }

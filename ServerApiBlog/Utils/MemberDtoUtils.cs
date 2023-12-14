@@ -20,7 +20,6 @@ namespace ServerApiBlog.Utils
                Email = m.Email,
                NickName = m.NickName,
                CreatedDate = DateTime.Now,
-               Blogs = [],
                Secret = "false"
            };
 

@@ -82,8 +82,9 @@ namespace ServerApiBlog.Controllers
         // POST: api/Members
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Member>> PostMember(Member member)
+        public async Task<ActionResult<MemberDTO>> PostMember(MemberDTO memberDTO)
         {
+            var member = MemberDtoUtils.DTO2Member(memberDTO);
             _context.Members.Add(member);
             await _context.SaveChangesAsync();
 
