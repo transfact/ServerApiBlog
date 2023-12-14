@@ -10,9 +10,8 @@ namespace ServerApiBlog.Models
 
         [ForeignKey(name: "MemberId")]
         public int MemberId { get; set; } // Foreign key property
-       [JsonIgnore]
-        public  Member Member { get; set; }
-
+        [JsonIgnore]
+        public virtual Member Member { get; set; }
         public string? Secret { get; set; }
     }
 }

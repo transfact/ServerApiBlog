@@ -23,14 +23,14 @@ namespace ServerApiBlog.Controllers
 
         // GET: api/Blogs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Blog>>> GetBlogs()
+        public async Task<ActionResult<IEnumerable<BlogDTO>>> GetBlogs()
         {
-            return await _context.Blogs.ToListAsync();
+            return await _context.Blogs.Select(x=>BlogDtoUtils.Blog2DTO(x)).ToListAsync();
         }
 
         // GET: api/Blogs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Blog>> GetBlog(int id)
+        public async Task<ActionResult<BlogDTO>> GetBlog(int id)
         {
             var blog = await _context.Blogs.FindAsync(id);
 
@@ -38,8 +38,8 @@ namespace ServerApiBlog.Controllers
             {
                 return NotFound();
             }
-
-            return blog;
+            
+            return BlogDtoUtils.Blog2DTO( blog);
         }
 
         // PUT: api/Blogs/5
@@ -78,7 +78,7 @@ namespace ServerApiBlog.Controllers
         [HttpPost]
         public async Task<ActionResult<Blog>> PostBlog(RequestBlogDTO blogDTO)
         {
-            // Retrieve the associated member based on MemberId
+            //id로 찾고
             var member = await _context.Members.FindAsync(blogDTO.MemberId);
 
             if (member == null)
@@ -87,16 +87,14 @@ namespace ServerApiBlog.Controllers
                 return NotFound("Member not found");
             }
 
-            // Convert DTO to Blog entity
+            // blogDTO를 blog로 바꾸고
             var blog = BlogDtoUtils.DTO2PostBlog(blogDTO);
 
-            // Set the Member navigation property of the Blog entity
+            // Blog를 set
             blog.Member = member;
-
-            // Add the blog to the context
+            // add
             _context.Blogs.Add(blog);
 
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetBlog), new { id = blog.BlogId }, blog);

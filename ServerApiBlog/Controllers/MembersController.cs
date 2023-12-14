@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using ServerApiBlog.Models;
 using ServerApiBlog.Models.DTOs;
 using ServerApiBlog.Utils;
@@ -27,6 +28,17 @@ namespace ServerApiBlog.Controllers
         public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
         {
             return await _context.Members.ToListAsync();
+        }
+
+        // GET: api/Members/Blog
+        [HttpGet("Blog")]
+        public async Task<ActionResult<IEnumerable<Member>>> GetMembersWithBlogs()
+        {
+            var membersWithBlogs = await _context.Members
+                .Include(member => member.Blogs) //블로그 조인
+                .ToListAsync();
+
+            return membersWithBlogs;
         }
 
         // GET: api/Members/5

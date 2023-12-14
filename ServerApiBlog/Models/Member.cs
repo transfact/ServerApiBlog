@@ -1,5 +1,4 @@
-﻿
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 namespace ServerApiBlog.Models
 {
     public class Member
@@ -8,9 +7,9 @@ namespace ServerApiBlog.Models
         public string? NickName { get; set; }
 
         public string? Email { get; set; }
-        public  DateTime CreatedDate { set;  get; } 
-        [JsonIgnore]
-        public  ICollection<Blog> Blogs { get; set; }
+        public  DateTime CreatedDate { set;  get; }
+
+        public virtual ICollection<Blog> Blogs { get; set; }
 
         public string? Secret { get; set; }
     }
