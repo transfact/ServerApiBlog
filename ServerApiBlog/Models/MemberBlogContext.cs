@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServerApiBlog.Models
 {
@@ -20,6 +21,8 @@ namespace ServerApiBlog.Models
                 .WithMany(m => m.Blogs)
                 .HasForeignKey(b => b.MemberId)
                 .OnDelete(DeleteBehavior.Cascade); // Adjust the deletion behavior if needed
+
         }
+
     }
 }

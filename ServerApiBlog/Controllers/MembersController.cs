@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using ServerApiBlog.Models;
 using ServerApiBlog.Models.DTOs;
+using ServerApiBlog.Models.DTOs.RequestDTO.cs;
 using ServerApiBlog.Utils;
 
 namespace ServerApiBlog.Controllers
@@ -21,6 +22,15 @@ namespace ServerApiBlog.Controllers
         public MembersController(MemberBlogContext context)
         {
             _context = context;
+            if (!context.Members.Any())
+            {
+                _context.Members.Add(new Member { Email = "member1@example.com", NickName = "Member1", Secret = "secret",CreatedDate = DateTime.Now });
+                _context.Members.Add(new Member { Email = "member2@example.com", NickName = "Member2", Secret = "secret", CreatedDate = DateTime.Now });
+                _context.Members.Add(new Member { Email = "gijin100@naver.com", NickName = "Lee", Secret = "secret" , CreatedDate = DateTime.Now });
+
+                _context.SaveChanges();
+            }
+
         }
 
         // GET: api/Members
@@ -28,6 +38,32 @@ namespace ServerApiBlog.Controllers
         public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
         {
             return await _context.Members.ToListAsync();
+        }
+
+        // Post: api/Members/Login
+        [HttpPost("Login")]
+        public async Task<ActionResult<MemberDTO>> PostMemberLogin(LoginRequestDTO loginRequestDTO)
+        {
+            Console.WriteLine(loginRequestDTO.email);
+            var email = loginRequestDTO.email;
+            var member2 = await _context.Members
+                .Where(member => member.Email == email)
+                .FirstOrDefaultAsync();
+            if (member2 == null)
+            {
+                return NotFound();
+            }
+
+            // Add a cookie to the response
+            var cookieOptions = new CookieOptions
+            {
+                // Set cookie properties such as expiration, domain, path, etc.
+                Expires = DateTime.Now.AddHours(1),
+                // More options can be set based on your requirements
+                HttpOnly = false, // This prevents the cookie from being accessed through JavaScript
+            }; 
+            Response.Cookies.Append("LoginCookie", member2.Email ?? "gijin100@naver.com", cookieOptions);
+            return CreatedAtAction(nameof(GetMember), new { id = member2.MemberId }, MemberDtoUtils.MemberToDTO(member2));
         }
 
         // GET: api/Members/Blog
