@@ -2,12 +2,23 @@
 using Microsoft.EntityFrameworkCore;
 using ServerApiBlog.Models;
 using ServerApiBlog.Data;
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddDbContext<BlogContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("BlogCRUDServerContext") ?? throw new InvalidOperationException("Connection string 'BlogCRUDServerContext' not found.")));
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://127.0.0.1:3000",
+                                              "https://localhost:7281");
+                      });
+});
 
 // Add services to the container.
 
@@ -30,7 +41,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCors(MyAllowSpecificOrigins);
 app.MapControllers();
 
 app.Run();
