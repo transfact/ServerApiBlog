@@ -7,6 +7,17 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000",
+                                              "https://localhost:7281/swagger/index.html"
+                                              ).AllowCredentials().AllowAnyHeader().AllowAnyMethod();
+                      });
+});
+
 //builder.Services.AddDbContext<BlogContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("BlogCRUDServerContext") ?? throw new InvalidOperationException("Connection string 'BlogCRUDServerContext' not found.")));
 
@@ -39,6 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 app.UseCors(MyAllowSpecificOrigins);
