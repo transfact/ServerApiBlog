@@ -44,7 +44,6 @@ namespace ServerApiBlog.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<MemberDTO>> PostMemberLogin(LoginRequestDTO loginRequestDTO)
         {
-            Console.WriteLine(loginRequestDTO.email);
             var email = loginRequestDTO.email;
             var member2 = await _context.Members
                 .Where(member => member.Email == email)
@@ -61,10 +60,32 @@ namespace ServerApiBlog.Controllers
                 Expires = DateTime.Now.AddHours(1),
                 // More options can be set based on your requirements
                 HttpOnly = false, // This prevents the cookie from being accessed through JavaScript
+                
+                SameSite = SameSiteMode.None,
+                Secure = true // Ensures the cookie is only sent over HTTPS
             }; 
             Response.Cookies.Append("LoginCookie", member2.Email ?? "gijin100@naver.com", cookieOptions);
+
             return CreatedAtAction(nameof(GetMember), new { id = member2.MemberId }, MemberDtoUtils.MemberToDTO(member2));
         }
+        //
+        [HttpGet("Cookie")]
+        public async Task<ActionResult<MemberDTO>> GetMembersWithCookie()
+        {
+            string email = Request.Cookies["LoginCookie"];
+            if (email == null || email == "")
+            {
+                return NotFound();
+            }
+            var member = await _context.Members.Where(m => m.Email == email).FirstAsync();
+
+            if (member==null)
+            {
+                return NotFound();
+            }
+            return MemberDtoUtils.MemberToDTO(member);
+        }
+
 
         // GET: api/Members/Blog
         [HttpGet("Blog")]

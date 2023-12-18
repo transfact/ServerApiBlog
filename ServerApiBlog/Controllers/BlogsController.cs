@@ -33,7 +33,6 @@ namespace ServerApiBlog.Controllers
         public async Task<ActionResult<BlogDTO>> GetBlog(int id)
         {
             var blog = await _context.Blogs.FindAsync(id);
-
             if (blog == null)
             {
                 return NotFound();
