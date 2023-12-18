@@ -21,16 +21,6 @@ builder.Services.AddCors(options =>
 //builder.Services.AddDbContext<BlogContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("BlogCRUDServerContext") ?? throw new InvalidOperationException("Connection string 'BlogCRUDServerContext' not found.")));
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://127.0.0.1:3000",
-                                              "https://localhost:7281");
-                      });
-});
-
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -51,7 +41,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 app.UseCors(MyAllowSpecificOrigins);

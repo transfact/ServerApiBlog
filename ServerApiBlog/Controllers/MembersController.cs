@@ -28,6 +28,10 @@ namespace ServerApiBlog.Controllers
                 _context.Members.Add(new Member { Email = "member2@example.com", NickName = "Member2", Secret = "secret", CreatedDate = DateTime.Now });
                 _context.Members.Add(new Member { Email = "gijin100@naver.com", NickName = "Lee", Secret = "secret" , CreatedDate = DateTime.Now });
 
+                _context.Blogs.Add(new Blog { MemberId=1 , Post = "본문1" , Secret= "string", Title= "제목1" });
+                _context.Blogs.Add(new Blog { MemberId = 1, Post = "본문2", Secret = "string", Title = "제목2" });
+                _context.Blogs.Add(new Blog { MemberId = 1, Post = "본문3", Secret = "string", Title = "제목3" });
+
                 _context.SaveChanges();
             }
 
@@ -35,9 +39,9 @@ namespace ServerApiBlog.Controllers
 
         // GET: api/Members
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Member>>> GetMembers()
+        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetMembers()
         {
-            return await _context.Members.ToListAsync();
+            return await _context.Members.Select(x=> MemberDtoUtils.MemberToDTO(x) ).ToListAsync();
         }
 
         // Post: api/Members/Login
@@ -61,6 +65,8 @@ namespace ServerApiBlog.Controllers
                 Expires = DateTime.Now.AddHours(1),
                 // More options can be set based on your requirements
                 HttpOnly = false, // This prevents the cookie from being accessed through JavaScript
+                SameSite = SameSiteMode.None,
+                Secure = true
             }; 
             Response.Cookies.Append("LoginCookie", member2.Email ?? "gijin100@naver.com", cookieOptions);
             return CreatedAtAction(nameof(GetMember), new { id = member2.MemberId }, MemberDtoUtils.MemberToDTO(member2));
@@ -76,6 +82,27 @@ namespace ServerApiBlog.Controllers
 
             return membersWithBlogs;
         }
+
+
+        // GET: api/valid
+        [HttpGet("valid")]
+        public async Task<ActionResult<MemberDTO>> GetMemberByCookie()
+        {
+            string? email = Request.Cookies["LoginCookie"];
+            Console.WriteLine("이메일 쿠키" + email);
+            if (email == null) {
+                return NotFound();
+            }
+            var membersByCookie = await _context.Members.Where(x=>x.Email == email) .FirstAsync();
+
+            if (membersByCookie == null)
+            {
+                return NotFound();
+            }
+
+            return CreatedAtAction(nameof(GetMemberByCookie), new { id = membersByCookie.MemberId }, MemberDtoUtils.MemberToDTO(membersByCookie));
+        }
+
 
         // GET: api/Members/5
         [HttpGet("{id}")]
