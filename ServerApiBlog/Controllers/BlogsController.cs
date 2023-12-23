@@ -103,11 +103,21 @@ namespace ServerApiBlog.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBlog(int id)
         {
-            var blog = await _context.Blogs.FindAsync(id);
+            string? emailCookie = Request.Cookies["LoginCookie"];
+            Console.WriteLine(emailCookie);
+            if (emailCookie == null)
+            {
+                return NotFound();
+            }
+            //B.BlogId == id &&
+            var blog = await _context.Blogs.Include(B =>B.Member).ThenInclude(m=>m.Email).Where(B => emailCookie.Equals(B.Member.Email)).FirstOrDefaultAsync();
+
+            
             if (blog == null)
             {
                 return NotFound();
             }
+
 
             _context.Blogs.Remove(blog);
             await _context.SaveChangesAsync();
