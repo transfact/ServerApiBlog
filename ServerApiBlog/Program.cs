@@ -13,8 +13,9 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.WithOrigins("http://localhost:3000",
-                                              "https://localhost:7281/swagger/index.html"
-                                              ).AllowCredentials().AllowAnyHeader().AllowAnyMethod();
+                                              "https://localhost:7281"
+                                              ).AllowCredentials()
+                                            .AllowAnyHeader().AllowAnyMethod();
                       });
 });
 
@@ -43,7 +44,6 @@ app.UseHttpsRedirection();
 
 
 app.UseAuthorization();
-app.UseCors(MyAllowSpecificOrigins);
 app.MapControllers();
 
 app.Run();
