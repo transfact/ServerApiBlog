@@ -110,14 +110,15 @@ namespace ServerApiBlog.Controllers
                 return NotFound();
             }
             //B.BlogId == id &&
-            var blog = await _context.Blogs.Include(B =>B.Member).ThenInclude(m=>m.Email).Where(B => emailCookie.Equals(B.Member.Email)).FirstOrDefaultAsync();
+            var blog = await _context.Blogs.Include(B =>B.Member).Where(B => emailCookie.Equals(B.Member.Email) && (B.BlogId==id) ).FirstOrDefaultAsync();
 
-            
+
             if (blog == null)
             {
+
+                //권한이 없는 것에 대한 에러처리
                 return NotFound();
             }
-
 
             _context.Blogs.Remove(blog);
             await _context.SaveChangesAsync();
