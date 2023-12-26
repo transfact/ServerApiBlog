@@ -78,7 +78,13 @@ namespace ServerApiBlog.Controllers
         public async Task<ActionResult<Blog>> PostBlog(RequestBlogDTO blogDTO)
         {
             //id로 찾고
-            var member = await _context.Members.FindAsync(blogDTO.MemberId);
+
+            string? emailCookie = Request.Cookies["LoginCookie"];
+            Console.WriteLine(blogDTO.Title, emailCookie);
+            Console.WriteLine(blogDTO.Post);
+            var member = await _context.Members.Where(x => x.Email.Equals(emailCookie)).FirstOrDefaultAsync();
+            Console.WriteLine(member);
+
 
             if (member == null)
             {
